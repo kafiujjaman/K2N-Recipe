@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-utensils me-2"></i>K2N_Recipe_Fiender🔎
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Category.html">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="popular.html">Popular</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <!-- User area (changes based on login status) -->
+                    <div id="user-not-logged-in" class="d-none">
+                        <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#authModal">
+                            <i class="fas fa-user me-1"></i> Login
+                        </button>
+                    </div>
+                    <div id="user-logged-in" class="d-none">
+                        <div class="dropdown">
+                            <button class="btn btn-link text-white dropdown-toggle d-flex align-items-center"
+                                type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                <img src="https://ui-avatars.com/api/?name=User&background=random"
+                                    class="user-avatar me-2" id="userAvatar">
+                                <span id="userNameNav">User</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#profileModal"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#" id="savedRecipesBtn"><i
+                                            class="fas fa-bookmark me-2"></i>Saved Recipes</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i
+                                            class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold">Recipe Finder</h1>
+            <p class="lead">Discover delicious recipes from around the world</p>
+
+            <!-- Search Form -->
+            <form id="search-form" class="row g-2 justify-content-center">
+                <div class="col-md-6">
+                    <input type="text" id="search-input" class="form-control form-control-lg"
+                        placeholder="Search for recipes (e.g., pasta, chicken, chocolate cake)">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-search me-1"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Featured Categories Section -->
+       
+
+        <!-- Loader -->
+        <div id="loader" class="loader"></div>
+
+        <!-- Results Section -->
+        <div id="results-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+            <!-- Results will be displayed here -->
+        </div>
+
+        <!-- No Results Message -->
+        <div id="no-results" class="text-center d-none">
+            <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+            <h3 class="text-muted">No recipes found</h3>
+            <p>Try searching for something else</p>
+        </div>
+
+        <!-- User Testimonials Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">What Our Users Say</h2>
+                <div id="testimonials-container" class="row row-cols-1 row-cols-md-3 g-4">
+                    <!-- Testimonials will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe Details Modal -->
+    <div class="modal fade recipe-details-modal" id="recipeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalRecipeTitle">Recipe Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalRecipeImage" src="" class="img-fluid modal-recipe-image w-100 mb-3" alt="">
+                    <h4>Ingredients</h4>
+                    <ul id="modalRecipeIngredients" class="mb-3"></ul>
+                    <h4>Instructions</h4>
+                    <p id="modalRecipeInstructions"></p>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <span class="badge bg-info"><i class="fas fa-clock me-1"></i> <span
+                                    id="modalRecipeTime"></span> mins</span>
+                            <span class="badge bg-success ms-2"><i class="fas fa-user me-1"></i> <span
+                                    id="modalRecipeServings"></span> servings</span>
+                        </div>
+                        <div>
+                            <button id="saveRecipeBtn" class="btn btn-outline-danger btn-sm me-2">
+                                <i class="far fa-bookmark"></i> Save
+                            </button>
+                            <a id="modalRecipeSource" href="https://www.youtube.com/" target="_blank"
+                                class="btn btn-outline-primary btn-sm">View Full Recipe</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="modal fade auth-modal" id="authModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login to Your Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs auth-tabs mb-4" id="authTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login"
+                                type="button" role="tab">Login</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register"
+                                type="button" role="tab">Register</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="authTabsContent">
+                        <!-- Login Form -->
+                        <div class="tab-pane fade show active" id="login" role="tabpanel">
+                            <form id="login-form">
+                                <div class="mb-3">
+                                    <label for="loginEmail" class="form-label">Email address</label>
+                                    <input type="email" class="form-control" id="loginEmail" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid email.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="loginPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="loginPassword" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a password.
+                                    </div>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Login</button>
+                            </form>
+                            <div class="text-center mt-3">
+                                <a href="#" id="forgotPassword">Forgot your password?</a>
+                            </div>
+                        </div>
+
+                        <!-- Registration Form -->
+                        <div class="tab-pane fade" id="register" role="tabpanel">
+                            <form id="register-form">
+                                <div class="mb-3">
+                                    <label for="registerName" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="registerName" required>
+                                    <div class="invalid-feedback">
+                                        Please provide your name.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="registerEmail" class="form-label">Email address</label>
+                                    <input type="email" class="form-control" id="registerEmail" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid email.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="registerPhone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="registerPhone" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a phone number.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="registerPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="registerPassword" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a password.
+                                    </div>
+                                    <div class="password-strength mt-2"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="registerConfirmPassword" required>
+                                    <div class="invalid-feedback">
+                                        Passwords do not match.
+                                    </div>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="termsAgree" required>
+                                    <label class="form-check-label" for="termsAgree">I agree to the Terms and
+                                        Conditions</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Register</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <img src="https://ui-avatars.com/api/?name=User&background=random" class="user-avatar mb-3"
+                            id="profileAvatar" style="width: 80px; height: 80px;">
+                        <h4 id="profileName">User Name</h4>
+                        <p class="text-muted" id="profileEmail">user@example.com</p>
+                    </div>
+                    <div class="profile-section mb-3">
+                        <h5>Account Details</h5>
+                        <div class="mb-2">
+                            <strong>Phone:</strong> <span id="profilePhone">+1234567890</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Member since:</strong> <span id="profileJoinDate">January 2025</span>
+                        </div>
+                    </div>
+                    <div class="profile-section">
+                        <h5>Preferences</h5>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                            <label class="form-check-label" for="emailNotifications">
+                                Email notifications
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="newsletterSubscription" checked>
+                            <label class="form-check-label" for="newsletterSubscription">
+                                Newsletter subscription
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saved Recipes Modal -->
+    <div class="modal fade" id="savedRecipesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Your Saved Recipes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="savedRecipesContainer" class="row row-cols-1 g-3">
+                        <!-- Saved recipes will be displayed here -->
+                    </div>
+                    <div id="noSavedRecipes" class="text-center py-4 d-none">
+                        <i class="fas fa-bookmark fa-3x mb-3 text-muted"></i>
+                        <h5 class="text-muted">No saved recipes yet</h5>
+                        <p>Start saving your favorite recipes to see them here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Share Your Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedback-form">
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="userName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="rating-stars">
+                                <input type="radio" id="star5" name="rating" value="5">
+                                <label for="star5"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star1" name="rating" value="1" required>
+                                <label for="star1"><i class="fas fa-star"></i></label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userComment" class="form-label">Your Feedback</label>
+                            <textarea class="form-control" id="userComment" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Submit Feedback</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Button -->
+    <button class="btn btn-primary feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+        <i class="fas fa-comment-alt"></i>
+    </button>
+
+    <!-- Footer -->
+   <footer class="pt-5">
+        <div class="container">
+            <div class="row">
+                <!-- Company Info -->
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-title">K2N_Recipe_Fiender🔎</h4>
+                    <p>We provide innovative solutions for your business needs. Our team is dedicated to delivering high-quality products and services.</p>
+                    <div class="mt-4">
+                        <div class="d-flex mb-2">
+                            <i class="bi bi-geo-alt-fill me-3"></i>
+                            <p>Road-6,Block-B<br>Ashuliya Model Town, Dhaka</p>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <i class="bi bi-telephone-fill me-3"></i>
+                            <p>01304694510</p>
+                        </div>
+                        <div class="d-flex">
+                            <i class="bi bi-envelope-fill me-3"></i>
+                            <p>K2N@company.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-2 mb-4">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>Home</a>
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>About Us</a>
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>Services</a>
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>Portfolio</a>
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>Contact</a>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="col-md-2 mb-4">
+                    <h4 class="footer-title">Services</h4>
+                    <div class="footer-links">
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>Web Design</a>
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>Web Development</a>
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>Graphic Design</a>
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>Digital Marketing</a>
+                        <a href="#"><i class="bi bi-chevron-right me-2"></i>SEO Services</a>
+                    </div>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p>Subscribe to our newsletter to receive updates and special offers.</p>
+                    <form class="newsletter-form mt-4">
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Your Email" aria-label="Your Email">
+                            <button class="btn" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                    <div class="mt-4">
+                        <h5 class="mb-3">Follow Us</h5>
+                        <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+
+    <!-- Bootstrap & jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
